@@ -30,7 +30,6 @@ def run_server(ip: str, port: int) -> None:
             connection, address = server_socket.accept()
             t = threading.Thread(target=connection_with_client, args=(connection,))
             t.start()
-            t.join()
 
 
 def get_args():
