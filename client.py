@@ -16,7 +16,7 @@ def send_data(server_ip, server_port, data):
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
         client_socket.connect((server_ip, server_port))
-        client_socket.send(struct.pack("I", len(data)))
+        client_socket.send(struct.pack("<I", len(data)))
         client_socket.sendall(data.encode("utf-8"))
 
 
