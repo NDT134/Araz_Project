@@ -2,10 +2,25 @@ import socket
 import argparse
 import sys
 import struct
+import threading
+
+
+# do the connection with the client
+def connection_with_client(connection: socket) -> None:
+    num = struct.unpack("<I", connection.recv(4))[0]
+
+    recv_bytes = b""
+    while len(recv_bytes) < num:
+        recv_bytes += connection.recv(num - len(recv_bytes))
+
+    message = recv_bytes.decode("utf-8")
+    print("Received data: ", message)
+    connection.close()
 
 
 # print the massages from the server
-def run_server(ip, port):
+def run_server(ip: str, port: int) -> None:
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.bind((ip, port))
@@ -13,15 +28,9 @@ def run_server(ip, port):
 
         while True:
             connection, address = server_socket.accept()
-            num = struct.unpack("<I", connection.recv(4))[0]
-
-            recv_bytes = b""
-            while len(recv_bytes) < num:
-                recv_bytes += connection.recv(num - len(recv_bytes))
-
-            message = recv_bytes.decode("utf-8")
-            print("Received data: ", message)
-            connection.close()
+            t = threading.Thread(target=connection_with_client, args=(connection,))
+            t.start()
+            t.join()
 
 
 def get_args():
