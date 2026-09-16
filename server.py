@@ -15,7 +15,10 @@ def run_server(ip, port):
             connection, address = server_socket.accept()
             msg = connection.recv(4)
             num = struct.unpack("I", msg)[0] + 2**16 * struct.unpack("I", msg)[1]
-            message = connection.recv(num).decode("utf-8")
+            message = ""
+            while len(message) < num:
+                message += connection.recv(num - len(message)).decode("utf-8")
+
             print("Received data: ", message)
             connection.close()
 
