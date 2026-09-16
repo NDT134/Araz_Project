@@ -14,12 +14,13 @@ def run_server(ip, port):
         while True:
             connection, address = server_socket.accept()
             msg = connection.recv(4)
-            num = struct.unpack("I", msg)[0] + 2**16 * struct.unpack("I", msg)[1]
-            message = ""
-            while len(message) < num:
-                message += connection.recv(num - len(message)).decode("utf-8")
+            num = struct.unpack("<I", msg)[0]
+            
+            recv_bytes = b""
+            while len(recv_bytes) < num:
+                recv_bytes += connection.recv(num - len(recv_bytes))
 
-            print("Received data: ", message)
+            print("Received data: ", recv_bytes.decode("utf-8"))
             connection.close()
 
 
@@ -35,12 +36,12 @@ def main():
     Implementation of CLI and sending data to server.
     """
     args = get_args()
-    try:
-        run_server(args.server_ip, args.server_port)
-        print("Done.")
-    except Exception as error:
-        print(f"ERROR: {error}")
-        return 1
+    # try:
+    run_server(args.server_ip, args.server_port)
+    print("Done.")
+    # except Exception as error:
+    #     print(f"ERROR: {error}")
+    #     return 1
 
 
 if __name__ == "__main__":
