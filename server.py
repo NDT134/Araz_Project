@@ -13,14 +13,14 @@ def run_server(ip, port):
 
         while True:
             connection, address = server_socket.accept()
-            msg = connection.recv(4)
-            num = struct.unpack("<I", msg)[0]
-            
+            num = struct.unpack("<I", connection.recv(4))[0]
+
             recv_bytes = b""
             while len(recv_bytes) < num:
                 recv_bytes += connection.recv(num - len(recv_bytes))
 
-            print("Received data: ", recv_bytes.decode("utf-8"))
+            message = recv_bytes.decode("utf-8")
+            print("Received data: ", message)
             connection.close()
 
 
